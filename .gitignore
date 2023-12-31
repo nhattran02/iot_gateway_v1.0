@@ -9,5 +9,5 @@
 *.log.*
 *.sig
 
-pkg/
-src/
+.vscode/
+build/
