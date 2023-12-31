@@ -16,10 +16,18 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_x(ui_Keyboard1, 0);
     lv_obj_set_y(ui_Keyboard1, 46);
     lv_obj_set_align(ui_Keyboard1, LV_ALIGN_CENTER);
-    lv_obj_set_style_bg_color(ui_Keyboard1, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_Keyboard1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    lv_obj_set_style_bg_color(ui_Keyboard1, lv_color_hex(0xAFCDF1), LV_PART_ITEMS | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_Keyboard1, lv_color_hex(0xB3B7BB), LV_PART_ITEMS | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Keyboard1, 255, LV_PART_ITEMS | LV_STATE_DEFAULT);
+
+    ui_TextArea2 = lv_textarea_create(ui_Screen1);
+    lv_obj_set_width(ui_TextArea2, 305);
+    lv_obj_set_height(ui_TextArea2, 78);
+    lv_obj_set_x(ui_TextArea2, 0);
+    lv_obj_set_y(ui_TextArea2, -73);
+    lv_obj_set_align(ui_TextArea2, LV_ALIGN_CENTER);
+    lv_textarea_set_placeholder_text(ui_TextArea2, "Input...");
+
+
 
 }

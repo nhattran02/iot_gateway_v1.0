@@ -13,6 +13,7 @@
 void ui_Screen1_screen_init(void);
 lv_obj_t * ui_Screen1;
 lv_obj_t * ui_Keyboard1;
+lv_obj_t * ui_TextArea2;
 lv_obj_t * ui____initial_actions0;
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////
@@ -29,9 +30,9 @@ lv_obj_t * ui____initial_actions0;
 
 ///////////////////// SCREENS ////////////////////
 
-void ui_init(lv_disp_t *dispp)
+void ui_init(void)
 {
-    // lv_disp_t * dispp = lv_disp_get_default();
+    lv_disp_t * dispp = lv_disp_get_default();
     lv_theme_t * theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED),
                                                false, LV_FONT_DEFAULT);
     lv_disp_set_theme(dispp, theme);

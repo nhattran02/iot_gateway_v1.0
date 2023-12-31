@@ -18,11 +18,13 @@ extern "C" {
 void ui_Screen1_screen_init(void);
 extern lv_obj_t * ui_Screen1;
 extern lv_obj_t * ui_Keyboard1;
+extern lv_obj_t * ui_TextArea2;
 extern lv_obj_t * ui____initial_actions0;
 
 
 
-void ui_init(lv_disp_t *dispp);
+
+void ui_init(void);
 
 #ifdef __cplusplus
 } /*extern "C"*/
