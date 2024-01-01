@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "ui.h"
 #include "gui_setting.h"
 #include "ui_main.h"
 
