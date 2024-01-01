@@ -1,19 +1,11 @@
-/*
- * SPDX-FileCopyrightText: 2021-2022 Espressif Systems (Shanghai) CO LTD
- *
- * SPDX-License-Identifier: CC0-1.0
- */
-
-// This demo UI is adapted from LVGL official example: https://docs.lvgl.io/master/widgets/extra/meter.html#simple-meter
-
 #include "lvgl.h"
 #include "esp_log.h"
 #include "ui_main.h"
 #include <sys/time.h>
 #include "lv_symbol_extra_def.h"
 
-
-typedef struct {
+typedef struct
+{
     char *name;
     void *img_src;
     void (*start_fn)(void (*fn)(void));
@@ -28,37 +20,41 @@ LV_IMG_DECLARE(icon_help)
 LV_IMG_DECLARE(icon_network)
 
 static item_desc_t item[] = {
-    { "Device Control", (void *) &icon_dev_ctrl,        NULL, NULL},
-    { "Network",        (void *) &icon_network,         NULL, NULL},
-    { "Media Player",   (void *) &icon_media_player,    NULL, NULL},
-    { "Help",           (void *) &icon_help,            NULL, NULL},
-    { "About Us",       (void *) &icon_about_us,        NULL, NULL},    
+    {"Device Control", (void *)&icon_dev_ctrl, NULL, NULL},
+    {"Network", (void *)&icon_network, NULL, NULL},
+    {"Media Player", (void *)&icon_media_player, NULL, NULL},
+    {"Help", (void *)&icon_help, NULL, NULL},
+    {"About Us", (void *)&icon_about_us, NULL, NULL},
 };
 
 static const char *TAG = "ui_main";
 LV_FONT_DECLARE(font_icon_16);
-static button_style_t g_btn_styles;
+
 static lv_obj_t *g_status_bar = NULL;
 static lv_obj_t *g_lab_wifi = NULL;
 static lv_obj_t *g_lab_cloud = NULL;
 static lv_obj_t *g_page_menu = NULL;
-static lv_obj_t *g_img_btn, *g_img_item = NULL;
-static int g_item_index = 0;
+static lv_obj_t *g_img_btn = NULL;
+static lv_obj_t *g_img_item = NULL;
 static lv_obj_t *g_focus_last_obj = NULL;
+static lv_obj_t *g_lab_item = NULL;
 static lv_obj_t *g_led_item[5];
 static lv_obj_t *g_group_list[3] = {0};
-static size_t g_item_size = sizeof(item) / sizeof(item[0]);
-static lv_obj_t *g_lab_item = NULL;
-static lv_group_t *g_btn_op_group = NULL;
 
+static int g_item_index = 0;
+static size_t g_item_size = sizeof(item) / sizeof(item[0]);
+static lv_group_t *g_btn_op_group = NULL;
+static button_style_t g_btn_styles;
 
 static void menu_prev_cb(lv_event_t *e)
 {
     lv_event_code_t code = lv_event_get_code(e);
 
-    if (LV_EVENT_RELEASED == code) {
+    if (LV_EVENT_RELEASED == code)
+    {
         lv_led_off(g_led_item[g_item_index]);
-        if (0 == g_item_index) {
+        if (0 == g_item_index)
+        {
             g_item_index = g_item_size;
         }
         g_item_index--;
@@ -72,10 +68,12 @@ static void menu_next_cb(lv_event_t *e)
 {
     lv_event_code_t code = lv_event_get_code(e);
 
-    if (LV_EVENT_RELEASED == code) {
+    if (LV_EVENT_RELEASED == code)
+    {
         lv_led_off(g_led_item[g_item_index]);
         g_item_index++;
-        if (g_item_index >= g_item_size) {
+        if (g_item_index >= g_item_size)
+        {
             g_item_index = 0;
         }
         lv_led_on(g_led_item[g_item_index]);
@@ -91,11 +89,16 @@ lv_obj_t *ui_main_get_status_bar(void)
 
 static void ui_led_set_visible(bool visible)
 {
-    for (size_t i = 0; i < sizeof(g_led_item) / sizeof(g_led_item[0]); i++) {
-        if (NULL != g_led_item[i]) {
-            if (visible) {
+    for (size_t i = 0; i < sizeof(g_led_item) / sizeof(g_led_item[0]); i++)
+    {
+        if (NULL != g_led_item[i])
+        {
+            if (visible)
+            {
                 lv_obj_clear_flag(g_led_item[i], LV_OBJ_FLAG_HIDDEN);
-            } else {
+            }
+            else
+            {
                 lv_obj_add_flag(g_led_item[i], LV_OBJ_FLAG_HIDDEN);
             }
         }
@@ -106,41 +109,46 @@ lv_group_t *ui_get_btn_op_group(void)
 {
     return g_btn_op_group;
 }
+
 button_style_t *ui_button_styles(void)
 {
     return &g_btn_styles;
 }
 
-static void btn_event_cb(lv_event_t * e)
+static void btn_event_cb(lv_event_t *e)
 {
     lv_event_code_t code = lv_event_get_code(e);
-    lv_obj_t * btn = lv_event_get_target(e);
-    if(code == LV_EVENT_CLICKED) {
+    lv_obj_t *btn = lv_event_get_target(e);
+    if (code == LV_EVENT_CLICKED)
+    {
         static uint8_t cnt = 0;
         cnt++;
 
         /*Get the first child of the button which is the label and change its text*/
-        lv_obj_t * label = lv_obj_get_child(btn, 0);
+        lv_obj_t *label = lv_obj_get_child(btn, 0);
         lv_label_set_text_fmt(label, "Button: %d", cnt);
     }
 }
 
 void ui_main_status_bar_set_wifi(bool is_connected)
 {
-    if (g_lab_wifi) {
+    if (g_lab_wifi)
+    {
         lv_label_set_text_static(g_lab_wifi, is_connected ? LV_SYMBOL_WIFI : LV_SYMBOL_EXTRA_WIFI_OFF);
     }
 }
 void ui_main_status_bar_set_cloud(bool is_connected)
 {
-    if (g_lab_cloud) {
+    if (g_lab_cloud)
+    {
         lv_label_set_text_static(g_lab_cloud, is_connected ? LV_SYMBOL_EXTRA_CLOUD_CHECK : "  ");
     }
 }
 
 static void ui_status_bar_set_visible(bool visible)
 {
-    if (visible) {
+    if (visible)
+    {
         // update all state
         // ui_main_status_bar_set_wifi(app_wifi_is_connected());
         ui_main_status_bar_set_wifi(true);
@@ -149,7 +157,9 @@ static void ui_status_bar_set_visible(bool visible)
         ui_main_status_bar_set_cloud(true);
 
         lv_obj_clear_flag(g_status_bar, LV_OBJ_FLAG_HIDDEN);
-    } else {
+    }
+    else
+    {
         lv_obj_add_flag(g_status_bar, LV_OBJ_FLAG_HIDDEN);
     }
 }
@@ -162,10 +172,7 @@ static void ui_button_style_init(void)
 
     lv_style_set_radius(&g_btn_styles.style, 5);
 
-    // lv_style_set_bg_opa(&g_btn_styles.style, LV_OPA_100);
     lv_style_set_bg_color(&g_btn_styles.style, lv_color_make(255, 255, 255));
-    // lv_style_set_bg_grad_color(&g_btn_styles.style, lv_color_make(255, 255, 255));
-    // lv_style_set_bg_grad_dir(&g_btn_styles.style, LV_GRAD_DIR_VER);
 
     lv_style_set_border_opa(&g_btn_styles.style, LV_OPA_30);
     lv_style_set_border_width(&g_btn_styles.style, 2);
@@ -176,16 +183,6 @@ static void ui_button_style_init(void)
     lv_style_set_shadow_ofs_x(&g_btn_styles.style, 0);
     lv_style_set_shadow_ofs_y(&g_btn_styles.style, 0);
 
-    // lv_style_set_pad_all(&g_btn_styles.style, 10);
-
-    // lv_style_set_outline_width(&g_btn_styles.style, 1);
-    // lv_style_set_outline_opa(&g_btn_styles.style, LV_OPA_COVER);
-    // lv_style_set_outline_color(&g_btn_styles.style, lv_palette_main(LV_PALETTE_RED));
-
-
-    // lv_style_set_text_color(&g_btn_styles.style, lv_color_white());
-    // lv_style_set_pad_all(&g_btn_styles.style, 10);
-
     /*Init the pressed style*/
 
     lv_style_init(&g_btn_styles.style_pr);
@@ -194,31 +191,32 @@ static void ui_button_style_init(void)
     lv_style_set_border_width(&g_btn_styles.style_pr, 2);
     lv_style_set_border_color(&g_btn_styles.style_pr, lv_palette_main(LV_PALETTE_GREY));
 
-
     lv_style_init(&g_btn_styles.style_focus);
     lv_style_set_outline_color(&g_btn_styles.style_focus, lv_color_make(255, 0, 0));
 
     lv_style_init(&g_btn_styles.style_focus_no_outline);
     lv_style_set_outline_width(&g_btn_styles.style_focus_no_outline, 0);
-
 }
 static uint32_t menu_get_num_offset(uint32_t focus, int32_t max, int32_t offset)
 {
-    if (focus >= max) {
+    if (focus >= max)
+    {
         ESP_LOGI(TAG, "[ERROR] focus should less than max");
         return focus;
     }
 
     uint32_t i;
-    if (offset >= 0) {
+    if (offset >= 0)
+    {
         i = (focus + offset) % max;
-    } else {
+    }
+    else
+    {
         offset = max + (offset % max);
         i = (focus + offset) % max;
     }
     return i;
 }
-
 
 static int8_t menu_direct_probe(lv_obj_t *focus_obj)
 {
@@ -229,30 +227,38 @@ static int8_t menu_direct_probe(lv_obj_t *focus_obj)
     index_prev = 0;
     index_max_sz = sizeof(g_group_list) / sizeof(g_group_list[0]);
 
-    for (int i = 0; i < index_max_sz; i++) {
-        if (focus_obj == g_group_list[i]) {
+    for (int i = 0; i < index_max_sz; i++)
+    {
+        if (focus_obj == g_group_list[i])
+        {
             index_focus = i;
         }
-        if (g_focus_last_obj == g_group_list[i]) {
+        if (g_focus_last_obj == g_group_list[i])
+        {
             index_prev = i;
         }
     }
 
-    if (NULL == g_focus_last_obj) {
+    if (NULL == g_focus_last_obj)
+    {
         direct = 0;
-    } else if (index_focus == menu_get_num_offset(index_prev, index_max_sz, 1)) {
+    }
+    else if (index_focus == menu_get_num_offset(index_prev, index_max_sz, 1))
+    {
         direct = 1;
-    } else if (index_focus == menu_get_num_offset(index_prev, index_max_sz, -1)) {
+    }
+    else if (index_focus == menu_get_num_offset(index_prev, index_max_sz, -1))
+    {
         direct = -1;
-    } else {
+    }
+    else
+    {
         direct = 0;
     }
 
     g_focus_last_obj = focus_obj;
     return direct;
 }
-
-
 
 void menu_new_item_select(lv_obj_t *obj)
 {
@@ -269,13 +275,17 @@ static void menu_enter_cb(lv_event_t *e)
     lv_event_code_t code = lv_event_get_code(e);
     lv_obj_t *obj = lv_event_get_user_data(e);
 
-    if (LV_EVENT_FOCUSED == code) {
+    if (LV_EVENT_FOCUSED == code)
+    {
         lv_led_off(g_led_item[g_item_index]);
         menu_new_item_select(obj);
-    } else if (LV_EVENT_CLICKED == code) {
+    }
+    else if (LV_EVENT_CLICKED == code)
+    {
         lv_obj_t *menu_btn_parent = lv_obj_get_parent(obj);
         ESP_LOGI(TAG, "menu click, item index = %d", g_item_index);
-        if (ui_get_btn_op_group()) {
+        if (ui_get_btn_op_group())
+        {
             lv_group_remove_all_objs(ui_get_btn_op_group());
         }
 
@@ -290,7 +300,8 @@ static void menu_enter_cb(lv_event_t *e)
 
 static void ui_main_menu(int32_t index_id)
 {
-    if (!g_page_menu) {
+    if (!g_page_menu)
+    {
         g_page_menu = lv_obj_create(lv_scr_act());
         lv_obj_set_size(g_page_menu, lv_obj_get_width(lv_obj_get_parent(g_page_menu)), lv_obj_get_height(lv_obj_get_parent(g_page_menu)) - lv_obj_get_height(ui_main_get_status_bar()));
         lv_obj_set_style_border_width(g_page_menu, 0, LV_PART_MAIN);
@@ -322,7 +333,7 @@ static void ui_main_menu(int32_t index_id)
     lv_obj_set_style_shadow_opa(g_img_btn, LV_OPA_90, LV_PART_MAIN);
     lv_obj_set_style_radius(g_img_btn, 40, LV_PART_MAIN);
     lv_obj_align(g_img_btn, LV_ALIGN_CENTER, 0, -20);
-    lv_obj_add_event_cb(g_img_btn, menu_enter_cb, LV_EVENT_ALL, g_img_btn);    
+    lv_obj_add_event_cb(g_img_btn, menu_enter_cb, LV_EVENT_ALL, g_img_btn);
 
     g_img_item = lv_img_create(g_img_btn);
     lv_img_set_src(g_img_item, item[index_id].img_src);
@@ -333,11 +344,15 @@ static void ui_main_menu(int32_t index_id)
     lv_obj_set_style_text_font(g_lab_item, &lv_font_montserrat_32, LV_PART_MAIN);
     lv_obj_align(g_lab_item, LV_ALIGN_CENTER, 0, 60);
 
-    for (size_t i = 0; i < sizeof(g_led_item) / sizeof(g_led_item[0]); i++) {
+    for (size_t i = 0; i < sizeof(g_led_item) / sizeof(g_led_item[0]); i++)
+    {
         int gap = 10;
-        if (NULL == g_led_item[i]) {
+        if (NULL == g_led_item[i])
+        {
             g_led_item[i] = lv_led_create(g_page_menu);
-        } else {
+        }
+        else
+        {
             lv_obj_clear_flag(g_led_item[i], LV_OBJ_FLAG_HIDDEN);
         }
         lv_led_off(g_led_item[i]);
@@ -383,20 +398,11 @@ static void ui_main_menu(int32_t index_id)
     lv_obj_set_style_text_color(label, lv_color_make(5, 5, 5), LV_PART_MAIN);
     lv_obj_center(label);
     lv_obj_add_event_cb(btn_next, menu_next_cb, LV_EVENT_ALL, btn_next);
-
-
-
-
-}
-static void ui_after_boot(void)
-{
-    ui_main_menu(g_item_index);
-    // ESP_LOGI(TAG, "ui_after_boot");
 }
 
 static void clock_run_cb(lv_timer_t *timer)
 {
-    lv_obj_t *lab_time = (lv_obj_t *) timer->user_data;
+    lv_obj_t *lab_time = (lv_obj_t *)timer->user_data;
     time_t now;
     struct tm timeinfo;
     time(&now);
@@ -422,7 +428,7 @@ void ui_main_start(void)
     lv_obj_t *lab_time = lv_label_create(g_status_bar);
     lv_label_set_text_static(lab_time, "23:59");
     lv_obj_align(lab_time, LV_ALIGN_LEFT_MID, 0, 0);
-    lv_timer_t *timer = lv_timer_create(clock_run_cb, 1000, (void *) lab_time);
+    lv_timer_t *timer = lv_timer_create(clock_run_cb, 1000, (void *)lab_time);
     clock_run_cb(timer);
 
     g_lab_wifi = lv_label_create(g_status_bar);
@@ -434,18 +440,5 @@ void ui_main_start(void)
 
     ui_status_bar_set_visible(0);
 
-    // boot_animate_start(ui_after_boot);
     ui_main_menu(g_item_index);
-
-
-
-    // lv_obj_t * btn = lv_btn_create(lv_scr_act());     /*Add a button the current screen*/
-    // lv_obj_set_pos(btn, 50, 50);                            /*Set its position*/
-    // lv_obj_set_size(btn, 120, 50);                          /*Set its size*/
-    // lv_obj_add_event_cb(btn, btn_event_cb, LV_EVENT_ALL, NULL);           /*Assign a callback to the button*/
-
-    // lv_obj_t * label = lv_label_create(btn);          /*Add a label to the button*/
-    // lv_label_set_text(label, "Button");                     /*Set the labels text*/
-    // lv_obj_center(label);
-
 }

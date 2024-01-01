@@ -1,11 +1,12 @@
-#ifndef  UI_MAIN_H
-#define  UI_MAIN_H
+#ifndef UI_MAIN_H
+#define UI_MAIN_H
 
 #include <stdbool.h>
 #include "esp_err.h"
 #include "lvgl.h"
 
-typedef struct {
+typedef struct
+{
     lv_style_t style;
     lv_style_t style_focus_no_outline;
     lv_style_t style_focus;
