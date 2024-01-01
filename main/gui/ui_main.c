@@ -3,6 +3,8 @@
 #include "ui_main.h"
 #include <sys/time.h>
 #include "lv_symbol_extra_def.h"
+#include "ui_device_ctrl.h"
+
 
 typedef struct
 {
@@ -13,18 +15,16 @@ typedef struct
 } item_desc_t;
 
 LV_IMG_DECLARE(icon_about_us)
-LV_IMG_DECLARE(icon_sensor_monitor)
 LV_IMG_DECLARE(icon_dev_ctrl)
-LV_IMG_DECLARE(icon_media_player)
-LV_IMG_DECLARE(icon_help)
 LV_IMG_DECLARE(icon_network)
 
+static void dev_ctrl_end_cb(void);
+static void ui_main_menu(int32_t index_id);
+
 static item_desc_t item[] = {
-    {"Device Control", (void *)&icon_dev_ctrl, NULL, NULL},
-    {"Network", (void *)&icon_network, NULL, NULL},
-    {"Media Player", (void *)&icon_media_player, NULL, NULL},
-    {"Help", (void *)&icon_help, NULL, NULL},
-    {"About Us", (void *)&icon_about_us, NULL, NULL},
+    {"Device Control",  (void *)&icon_dev_ctrl,     ui_device_ctrl_start, dev_ctrl_end_cb},
+    {"Network",         (void *)&icon_network,      NULL, NULL},
+    {"About Us",        (void *)&icon_about_us,     NULL, NULL},
 };
 
 static const char *TAG = "ui_main";
@@ -38,13 +38,19 @@ static lv_obj_t *g_img_btn = NULL;
 static lv_obj_t *g_img_item = NULL;
 static lv_obj_t *g_focus_last_obj = NULL;
 static lv_obj_t *g_lab_item = NULL;
-static lv_obj_t *g_led_item[5];
+static lv_obj_t *g_led_item[3];
 static lv_obj_t *g_group_list[3] = {0};
 
 static int g_item_index = 0;
 static size_t g_item_size = sizeof(item) / sizeof(item[0]);
 static lv_group_t *g_btn_op_group = NULL;
 static button_style_t g_btn_styles;
+ 
+static void dev_ctrl_end_cb(void)
+{
+    ESP_LOGI(TAG, "dev_ctrl end");
+    ui_main_menu(g_item_index);
+}
 
 static void menu_prev_cb(lv_event_t *e)
 {
@@ -197,6 +203,7 @@ static void ui_button_style_init(void)
     lv_style_init(&g_btn_styles.style_focus_no_outline);
     lv_style_set_outline_width(&g_btn_styles.style_focus_no_outline, 0);
 }
+
 static uint32_t menu_get_num_offset(uint32_t focus, int32_t max, int32_t offset)
 {
     if (focus >= max)
@@ -331,7 +338,7 @@ static void ui_main_menu(int32_t index_id)
     lv_obj_set_style_shadow_ofs_x(g_img_btn, 0, LV_PART_MAIN);
     lv_obj_set_style_shadow_ofs_y(g_img_btn, 0, LV_PART_MAIN);
     lv_obj_set_style_shadow_opa(g_img_btn, LV_OPA_90, LV_PART_MAIN);
-    lv_obj_set_style_radius(g_img_btn, 40, LV_PART_MAIN);
+    lv_obj_set_style_radius(g_img_btn, 10, LV_PART_MAIN);
     lv_obj_align(g_img_btn, LV_ALIGN_CENTER, 0, -20);
     lv_obj_add_event_cb(g_img_btn, menu_enter_cb, LV_EVENT_ALL, g_img_btn);
 
@@ -341,8 +348,8 @@ static void ui_main_menu(int32_t index_id)
 
     g_lab_item = lv_label_create(obj);
     lv_label_set_text_static(g_lab_item, item[index_id].name);
-    lv_obj_set_style_text_font(g_lab_item, &lv_font_montserrat_32, LV_PART_MAIN);
-    lv_obj_align(g_lab_item, LV_ALIGN_CENTER, 0, 60);
+    lv_obj_set_style_text_font(g_lab_item, &lv_font_montserrat_24, LV_PART_MAIN);
+    lv_obj_align(g_lab_item, LV_ALIGN_CENTER, 0, 55);
 
     for (size_t i = 0; i < sizeof(g_led_item) / sizeof(g_led_item[0]); i++)
     {
@@ -357,7 +364,7 @@ static void ui_main_menu(int32_t index_id)
         }
         lv_led_off(g_led_item[i]);
         lv_obj_set_size(g_led_item[i], 5, 5);
-        lv_obj_align_to(g_led_item[i], g_page_menu, LV_ALIGN_BOTTOM_MID, 2 * gap * i - 4 * gap, 0);
+        lv_obj_align_to(g_led_item[i], g_page_menu, LV_ALIGN_BOTTOM_MID, 2 * gap * i - 4 * gap + (18), 0);
     }
     lv_led_on(g_led_item[index_id]);
 

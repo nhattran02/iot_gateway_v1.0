@@ -90,7 +90,7 @@ static void lvgl_touch_cb(lv_indev_drv_t *drv, lv_indev_data_t *data)
         data->point.x = (int)(((float)(LCD_H_RES - touchpad_x[0]) * (float)1.0417) - 7.2917);
         data->point.y = (int)(((float)(LCD_V_RES - touchpad_y[0]) * (float)1.14286) - 15.7143);
         data->state = LV_INDEV_STATE_PRESSED;
-        ESP_LOGI(TAG, "Touchpad pressed: %dx%d", data->point.x, data->point.y);
+        // ESP_LOGI(TAG, "Touchpad pressed: %dx%d", data->point.x, data->point.y);
     }
     else
     {

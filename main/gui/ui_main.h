@@ -14,5 +14,8 @@ typedef struct
 } button_style_t;
 
 void ui_main_start(void);
+lv_obj_t *ui_main_get_status_bar(void);
+button_style_t *ui_button_styles(void);
+
 
 #endif // UI_MAIN_H
