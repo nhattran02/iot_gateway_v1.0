@@ -13,7 +13,6 @@ void app_main(void)
 
     ui_main_start();
     // ui_init();
-
     while (1)
     {
         vTaskDelay(pdMS_TO_TICKS(10));

@@ -108,7 +108,7 @@ void ui_device_ctrl_start(void (*fn)(void))
 {
     ESP_LOGI(TAG, "device control initialize");
     g_dev_ctrl_end_cb = fn;
-
+    
     lv_obj_t *page = lv_obj_create(lv_scr_act());
     lv_obj_set_size(page, lv_obj_get_width(lv_obj_get_parent(page)), lv_obj_get_height(lv_obj_get_parent(page)) - lv_obj_get_height(ui_main_get_status_bar()));
     lv_obj_set_style_border_width(page, 0, LV_PART_MAIN);
@@ -123,7 +123,7 @@ void ui_device_ctrl_start(void (*fn)(void))
     lv_obj_add_style(btn_return, &ui_button_styles()->style_focus, LV_STATE_FOCUS_KEY);
     lv_obj_add_style(btn_return, &ui_button_styles()->style_focus, LV_STATE_FOCUSED);
     lv_obj_set_style_shadow_color(btn_return, lv_color_make(0, 0, 0), LV_PART_MAIN);
-    lv_obj_set_style_shadow_width(btn_return, 20, LV_PART_MAIN);
+    lv_obj_set_style_shadow_width(btn_return, 10, LV_PART_MAIN);
     lv_obj_set_style_shadow_opa(btn_return, LV_OPA_80, LV_PART_MAIN);
     lv_obj_align(btn_return, LV_ALIGN_TOP_LEFT, 0, -8);
     lv_obj_t *lab_btn_text = lv_label_create(btn_return);
@@ -131,6 +131,7 @@ void ui_device_ctrl_start(void (*fn)(void))
     lv_obj_set_style_text_color(lab_btn_text, lv_color_make(0, 0, 0), LV_STATE_DEFAULT);
     lv_obj_center(lab_btn_text);
     lv_obj_add_event_cb(btn_return, ui_dev_ctrl_page_return_click_cb, LV_EVENT_CLICKED, page);
+
 
     for (size_t i = 0; i < 4; i++)
     {

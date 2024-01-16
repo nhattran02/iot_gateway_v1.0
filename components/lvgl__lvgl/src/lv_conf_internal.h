@@ -2166,7 +2166,7 @@
     #ifdef CONFIG_LV_USE_QRCODE
         #define LV_USE_QRCODE CONFIG_LV_USE_QRCODE
     #else
-        #define LV_USE_QRCODE 0
+        #define LV_USE_QRCODE 1
     #endif
 #endif
 

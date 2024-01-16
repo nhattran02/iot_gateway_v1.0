@@ -16,6 +16,6 @@ typedef struct
 void ui_main_start(void);
 lv_obj_t *ui_main_get_status_bar(void);
 button_style_t *ui_button_styles(void);
-
+void net_end_cb(void);
 
 #endif // UI_MAIN_H

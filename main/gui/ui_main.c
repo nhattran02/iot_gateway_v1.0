@@ -4,7 +4,8 @@
 #include <sys/time.h>
 #include "lv_symbol_extra_def.h"
 #include "ui_device_ctrl.h"
-
+#include <qrcode.h>
+#include "ui_net_config.h"
 
 typedef struct
 {
@@ -19,11 +20,12 @@ LV_IMG_DECLARE(icon_dev_ctrl)
 LV_IMG_DECLARE(icon_network)
 
 static void dev_ctrl_end_cb(void);
+void net_end_cb(void);
 static void ui_main_menu(int32_t index_id);
 
 static item_desc_t item[] = {
     {"Device Control",  (void *)&icon_dev_ctrl,     ui_device_ctrl_start, dev_ctrl_end_cb},
-    {"Network",         (void *)&icon_network,      NULL, NULL},
+    {"Network",         (void *)&icon_network,      ui_net_config_start, net_end_cb},
     {"About Us",        (void *)&icon_about_us,     NULL, NULL},
 };
 
@@ -45,10 +47,16 @@ static int g_item_index = 0;
 static size_t g_item_size = sizeof(item) / sizeof(item[0]);
 static lv_group_t *g_btn_op_group = NULL;
 static button_style_t g_btn_styles;
- 
+
 static void dev_ctrl_end_cb(void)
 {
     ESP_LOGI(TAG, "dev_ctrl end");
+    ui_main_menu(g_item_index);
+}
+
+void net_end_cb(void)
+{
+    ESP_LOGI(TAG, "net end");
     ui_main_menu(g_item_index);
 }
 
@@ -299,7 +307,7 @@ static void menu_enter_cb(lv_event_t *e)
         ui_led_set_visible(false);
         lv_obj_del(menu_btn_parent);
         g_focus_last_obj = NULL;
-
+        
         ui_status_bar_set_visible(true);
         item[g_item_index].start_fn(item[g_item_index].end_fn);
     }
@@ -326,6 +334,14 @@ static void ui_main_menu(int32_t index_id)
     lv_obj_set_style_shadow_width(obj, 20, LV_PART_MAIN);
     lv_obj_set_style_shadow_opa(obj, LV_OPA_90, LV_PART_MAIN);
     lv_obj_align(obj, LV_ALIGN_TOP_MID, 0, -10);
+    
+
+    // /* **************** QR CODE **************** */
+    // // static const char *qr_payload = "https://espressif.com/esp-box";
+    // static const char *qr_payload = "WIFI:S:MANGDAYKTX H2-808;T:WPA;P:44448888a;;";
+    // lv_obj_t *qr = lv_qrcode_create(obj, 120, lv_color_black(), lv_color_white());
+    // lv_qrcode_update(qr, qr_payload, strlen(qr_payload));
+    // lv_obj_align(qr, LV_ALIGN_CENTER, 0, 10);
 
     g_img_btn = lv_btn_create(obj);
     lv_obj_set_size(g_img_btn, 80, 80);
@@ -367,7 +383,7 @@ static void ui_main_menu(int32_t index_id)
         lv_obj_align_to(g_led_item[i], g_page_menu, LV_ALIGN_BOTTOM_MID, 2 * gap * i - 4 * gap + (18), 0);
     }
     lv_led_on(g_led_item[index_id]);
-
+    
     lv_obj_t *btn_prev = lv_btn_create(obj);
     lv_obj_add_style(btn_prev, &ui_button_styles()->style_pr, LV_STATE_PRESSED);
     lv_obj_add_style(btn_prev, &ui_button_styles()->style_focus_no_outline, LV_STATE_FOCUS_KEY);
@@ -386,7 +402,7 @@ static void ui_main_menu(int32_t index_id)
     lv_obj_set_style_text_color(label, lv_color_make(5, 5, 5), LV_PART_MAIN);
     lv_obj_center(label);
     lv_obj_add_event_cb(btn_prev, menu_prev_cb, LV_EVENT_ALL, btn_prev);
-
+    
     lv_obj_t *btn_next = lv_btn_create(obj);
     lv_obj_add_style(btn_next, &ui_button_styles()->style_pr, LV_STATE_PRESSED);
     lv_obj_add_style(btn_next, &ui_button_styles()->style_focus_no_outline, LV_STATE_FOCUS_KEY);
@@ -406,6 +422,7 @@ static void ui_main_menu(int32_t index_id)
     lv_obj_center(label);
     lv_obj_add_event_cb(btn_next, menu_next_cb, LV_EVENT_ALL, btn_next);
 }
+
 
 static void clock_run_cb(lv_timer_t *timer)
 {
